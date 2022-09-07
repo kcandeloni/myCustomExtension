@@ -1,0 +1,6 @@
+let color = '#ed2c2c';
+
+chrome.runtime.onInstalled.addListener(() => {
+  chrome.storage.sync.set({ color });
+  console.log('Default background color set to %cgreen', `color: ${color}`);
+});
