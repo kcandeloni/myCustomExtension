@@ -1,67 +1,86 @@
-function getCupons(){
+function getCupons() {
+    let valideURL = window.location.href;
+    const valideString = valideURL.split('?')[1];
+    if (valideString[0] !== 'p') return;
+
     let baseURL = window.location.href;
-    let iterador = 0;
-	let listaCupons = [];
-	let lista = document.querySelectorAll('a');
-    let setURL = lista[0].href;
-    let parseUrlOne = setURL.split('=',2)[0];
-    let parseUrlTwo = setURL.split('&Pdv=',2)[1];
-	let listaInvertida = [];
-    for(let i = 0; i < lista.length; i++){ 
-        listaInvertida.push(lista[i].innerText);
+    let iterador = 1;
+    let listaCupons = [];
+    let lista = document.querySelectorAll('#lista-cupons a');
+    let listaInvertida = [];
+    for (let i = 0; i < lista.length; i++) {
+        listaInvertida.push(lista[i].href);
     }
-	for(let i = (listaInvertida.length - 1); i >= 0; i--){
-	listaCupons.push(listaInvertida[i]);
-	}
+    listaCupons.push(baseURL);
+    for (let i = (listaInvertida.length - 1); i >= 0; i--) {
+        listaCupons.push(listaInvertida[i]);
+    }
+    listaCupons.push(baseURL);
     const persisteDados = JSON.stringify({
         baseURL,
         iterador,
-        listaCupons,
-        parseUrlOne,
-        parseUrlTwo
+        listaCupons
     });
-
     localStorage.setItem("dadosCupons", persisteDados);
-    window.location.assign(`${parseUrlOne}=${listaCupons[iterador]}&Pdv=${parseUrlTwo}`);
+    window.location.assign(listaCupons[iterador]);
 }
-
-function alterar_url(op){
+function alterar_url(op) {
     const dadoSerializada = localStorage.getItem("dadosCupons");
-    if(!dadoSerializada){
+    if (!dadoSerializada) {
         return;
     }
-    let {iterador, listaCupons, baseURL, parseUrlOne, parseUrlTwo } = JSON.parse(dadoSerializada);
- 
-    if(op){
+    let { iterador,
+        listaCupons,
+        baseURL } = JSON.parse(dadoSerializada);
+    if (op) {
         iterador++;
-        if(iterador >= listaCupons.length){
+        if (iterador >= listaCupons.length) {
+            localStorage.setItem("dadosCupons", JSON.stringify({
+                baseURL,
+                iterador,
+                listaCupons
+            }));
             window.location.assign(baseURL);
             return;
         }
     }
-    else{
+    else {
         iterador--;
-        if(iterador < 0){
+        if (iterador < 0) {
+            localStorage.setItem("dadosCupons", JSON.stringify({
+                baseURL,
+                iterador,
+                listaCupons
+            }));
             window.location.assign(baseURL);
             return;
         }
     }
-
     const persisteDados = JSON.stringify({
         baseURL,
         iterador,
-        listaCupons,
-        parseUrlOne,
-        parseUrlTwo
+        listaCupons
     });
-
     localStorage.setItem("dadosCupons", persisteDados);
-
-    window.location.assign(`${parseUrlOne}=${listaCupons[iterador]}&Pdv=${parseUrlTwo}`);
+    window.location.assign(listaCupons[iterador]);
 }
+function viewCupons() {
+    const dadoSerializada = localStorage.getItem("dadosCupons");
+    if (!dadoSerializada) {
+        return;
+    }
+    let { iterador,
+        listaCupons,
+        baseURL } = JSON.parse(dadoSerializada);
 
-let escutaTecla = document.querySelector("body");
-addEventListener("keyup", function(event) {
+    if (baseURL === window.location.href) {
+        window.location.assign(listaCupons[iterador]);
+        return;
+    }
+    window.location.assign(baseURL);
+}
+let escutaTecla = document.querySelector(".html");
+addEventListener("keyup", function (event) {
     if (event.keyCode === 0x27) {
         event.preventDefault();
         alterar_url(true);
@@ -70,8 +89,12 @@ addEventListener("keyup", function(event) {
         event.preventDefault();
         alterar_url(false);
     }
-	if (event.keyCode === 0x6B) {
+    if (event.keyCode === 0x6B) {
         event.preventDefault();
         getCupons();
+    }
+    if (event.keyCode === 0x6D) {
+        event.preventDefault();
+        viewCupons();
     }
 });
