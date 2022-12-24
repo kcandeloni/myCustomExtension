@@ -1,12 +1,12 @@
 {
-    "name": "Getting Started Example",
-    "description": "Build an Extension!",
-    "version": "1.0",
+    "name": "Coupon Audit",
+    "description": "extension to assist in internal auditing of coupons, access coupons quickly",
+    "version": "2.2",
     "manifest_version": 3,
     "background": {
       "service_worker": "background.js"
     },
-    "permissions": ["storage", "activeTab", "scripting","tabs"],
+    "permissions": ["storage", "activeTab", "scripting", "tabs"],
   "action": {
     "default_popup": "popup.html",
     "default_icon": {
@@ -24,7 +24,7 @@
   },
   "content_scripts": [
     {
-      "matches": [ "http://192.168.0.60/*", "http://127.0.0.1:5500/*"],
-      "js": ["kevin.js"]
+      "matches": [ "http://192.168.0.60/*"],
+      "js": ["iterateCoupons.js"]
   }] 
 }
